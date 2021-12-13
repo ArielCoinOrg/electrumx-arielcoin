@@ -998,6 +998,9 @@ class Tidecoin(Coin):
     DESERIALIZER = lib_tx.DeserializerSegWit
     RPC_PORT = 8754
     PEERS = []
+    TX_COUNT = 440617
+    TX_COUNT_HEIGHT = 11052
+    TX_PER_BLOCK = 3
 
 
 class Litecoin(Coin):
