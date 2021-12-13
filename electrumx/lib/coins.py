@@ -985,6 +985,21 @@ class Sumcoin(Coin):
     PEERS = []
 
 
+class Tidecoin(Coin):
+    NAME = "Tidecoin"
+    SHORTNAME = "TDC"
+    NET = "mainnet"
+    XPUB_VERBYTES = bytes.fromhex("0768acde")
+    XPRV_VERBYTES = bytes.fromhex("0768feb1")
+    P2PKH_VERBYTE = bytes.fromhex("21")
+    P2SH_VERBYTES = (bytes.fromhex("46"), bytes.fromhex("41"))
+    WIF_BYTE = bytes.fromhex("7d")
+    GENESIS_HASH = ('480ecc7602d8989f32483377ed66381c391dda6215aeef9e80486a7fd3018075')
+    DESERIALIZER = lib_tx.DeserializerSegWit
+    RPC_PORT = 8754
+    PEERS = []
+
+
 class Litecoin(Coin):
     NAME = "Litecoin"
     SHORTNAME = "LTC"
