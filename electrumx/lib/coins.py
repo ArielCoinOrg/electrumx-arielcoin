@@ -994,9 +994,11 @@ class Tidecoin(Coin):
     P2PKH_VERBYTE = bytes.fromhex("21")
     P2SH_VERBYTES = (bytes.fromhex("46"), bytes.fromhex("41"))
     WIF_BYTE = bytes.fromhex("7d")
+    PEER_DEFAULT_PORTS = {'t': '50001', 's': '50002'}
     GENESIS_HASH = ('480ecc7602d8989f32483377ed66381c391dda6215aeef9e80486a7fd3018075')
     DESERIALIZER = lib_tx.DeserializerSegWit
     RPC_PORT = 8754
+    CHUNK_SIZE = 7200
     PEERS = []
     TX_COUNT = 440617
     TX_COUNT_HEIGHT = 11052
