@@ -838,7 +838,7 @@ class SessionBase(RPCSession):
     sessions.
     '''
 
-    MAX_CHUNK_SIZE = 2016
+    MAX_CHUNK_SIZE = 7200
     session_counter = itertools.count()
     log_new = False
 
