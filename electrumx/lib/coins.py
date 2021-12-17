@@ -1003,6 +1003,10 @@ class Tidecoin(Coin):
     TX_COUNT = 440617
     TX_COUNT_HEIGHT = 11052
     TX_PER_BLOCK = 3
+    PEERS = [
+        '45.82.71.237 s t',
+        '35.81.34.126 s t'
+    ]
 
 
 class Litecoin(Coin):
