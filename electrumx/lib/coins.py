@@ -997,12 +997,11 @@ class Tidecoin(Coin):
     PEER_DEFAULT_PORTS = {'t': '50001', 's': '50002'}
     GENESIS_HASH = ('480ecc7602d8989f32483377ed66381c391dda6215aeef9e80486a7fd3018075')
     DESERIALIZER = lib_tx.DeserializerSegWit
-    DEFAULT_MAX_SEND = 1_000_000_000
     RPC_PORT = 8754
     CHUNK_SIZE = 7200
     PEERS = []
-    TX_COUNT = 440617
-    TX_COUNT_HEIGHT = 11052
+    TX_COUNT = 3
+    TX_COUNT_HEIGHT = 1
     TX_PER_BLOCK = 3
     PEERS = [
         '45.82.71.237 s t',
