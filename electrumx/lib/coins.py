@@ -1000,13 +1000,34 @@ class Tidecoin(Coin):
     DEFAULT_MAX_SEND = 1_000_000_000
     RPC_PORT = 8754
     CHUNK_SIZE = 7200
-    PEERS = []
     TX_COUNT = 440617
     TX_COUNT_HEIGHT = 11052
     TX_PER_BLOCK = 3
     PEERS = [
         '45.82.71.237 s t',
         '35.81.34.126 s t'
+    ]
+
+
+class Arielcoin(Coin):
+    NAME = "Arielcoin"
+    SHORTNAME = "ARL"
+    NET = "mainnet"
+    XPUB_VERBYTES = bytes.fromhex("0788B21E")
+    XPRV_VERBYTES = bytes.fromhex("0788ADE4")
+    P2PKH_VERBYTE = bytes.fromhex("3A")
+    P2SH_VERBYTES = (bytes.fromhex("46"), bytes.fromhex("17"))
+    WIF_BYTE = bytes.fromhex("7d")
+    PEER_DEFAULT_PORTS = {'t': '50003', 's': '50004'}
+    GENESIS_HASH = ('000000a9ea82f2b776be3115ecd5d72333fcb0f9d9cb3dacbc881c6090f9378f')
+    DESERIALIZER = lib_tx.DeserializerSegWit
+    DEFAULT_MAX_SEND = 1_000_000_000
+    RPC_PORT = 8687
+    CHUNK_SIZE = 7200
+    TX_COUNT = 440617
+    TX_COUNT_HEIGHT = 11052
+    TX_PER_BLOCK = 3
+    PEERS = [
     ]
 
 
