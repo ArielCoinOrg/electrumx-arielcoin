@@ -1018,7 +1018,7 @@ class Arielcoin(Coin):
     P2PKH_VERBYTE = bytes.fromhex("3A")
     P2SH_VERBYTES = (bytes.fromhex("46"), bytes.fromhex("17"))
     WIF_BYTE = bytes.fromhex("7d")
-    PEER_DEFAULT_PORTS = {'t': '50003', 's': '50004'}
+    PEER_DEFAULT_PORTS = {'t': '50011', 's': '50012'}
     GENESIS_HASH = ('000000a9ea82f2b776be3115ecd5d72333fcb0f9d9cb3dacbc881c6090f9378f')
     DESERIALIZER = lib_tx.DeserializerSegWit
     DEFAULT_MAX_SEND = 1_000_000_000
