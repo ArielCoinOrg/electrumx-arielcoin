@@ -522,89 +522,6 @@ class PrimeChainPowMixin:
         return deserializer.read_header(cls.BASIC_HEADER_SIZE)
 
 
-class Verge(Coin):
-    NAME = "Verge"
-    SHORTNAME = "XVG"
-    NET = "mainnet"
-    XPUB_VERBYTES = bytes.fromhex("022d2533")
-    XPRV_VERBYTES = bytes.fromhex("0221312b")
-    P2PKH_VERBYTE = bytes.fromhex("30")
-    P2SH_VERBYTES = [bytes.fromhex("33")]
-    WIF_BYTE = bytes.fromhex("9E")
-    GENESIS_HASH = ('00000fc63692467faeb20cdb3b53200d'
-                    'c601d75bdfa1001463304cc790d77278')
-    RPC_PORT = 20102
-    TX_COUNT = 500000
-    TX_COUNT_HEIGHT = 3082138
-    TX_PER_BLOCK = 1
-    DESERIALIZER = lib_tx.DeserializerVerge
-
-    @classmethod
-    def header_hash(cls, header):
-        '''Given a header return the hash.'''
-        import scrypt
-        return scrypt.hash(header, header, 1024, 1, 1, 32)
-
-
-class HOdlcoin(Coin):
-    NAME = "HOdlcoin"
-    SHORTNAME = "HODLC"
-    NET = "mainnet"
-    BASIC_HEADER_SIZE = 88
-    P2PKH_VERBYTE = bytes.fromhex("28")
-    WIF_BYTE = bytes.fromhex("a8")
-    GENESIS_HASH = ('008872e5582924544e5c707ee4b839bb'
-                    '82c28a9e94e917c94b40538d5658c04b')
-    DESERIALIZER = lib_tx.DeserializerSegWit
-    TX_COUNT = 258858
-    TX_COUNT_HEIGHT = 382138
-    TX_PER_BLOCK = 5
-
-
-class BitcoinSV(BitcoinMixin, Coin):
-    NAME = "BitcoinSV"
-    SHORTNAME = "BSV"
-    TX_COUNT = 267318795
-    TX_COUNT_HEIGHT = 557037
-    TX_PER_BLOCK = 400
-    PEERS = [
-        'electrumx.bitcoinsv.io s',
-        'satoshi.vision.cash s',
-        'sv.usebsv.com s t',
-        'sv.jochen-hoenicke.de s t',
-        'sv.satoshi.io s t',
-    ]
-    GENESIS_ACTIVATION = 620_538
-
-
-class BitcoinCash(BitcoinMixin, Coin):
-    NAME = "BitcoinCash"
-    SHORTNAME = "BCH"
-    TX_COUNT = 265479628
-    TX_COUNT_HEIGHT = 556592
-    TX_PER_BLOCK = 400
-    PEERS = [
-        'bch.imaginary.cash s t',
-        'electroncash.dk s t',
-        'electrum.imaginary.cash s t',
-        'bch.loping.net s t',
-        'electroncash.de s t',
-        'blackie.c3-soft.com s t',
-    ]
-    BLOCK_PROCESSOR = block_proc.LTORBlockProcessor
-
-    @classmethod
-    def warn_old_client_on_tx_broadcast(cls, client_ver):
-        if client_ver < (3, 3, 4):
-            return ('<br/><br/>'
-                    'Your transaction was successfully broadcast.<br/><br/>'
-                    'However, you are using a VULNERABLE version of Electron Cash.<br/>'
-                    'Download the latest version from this web site ONLY:<br/>'
-                    'https://electroncash.org/'
-                    '<br/><br/>')
-        return False
-
-
 class Bitcoin(BitcoinMixin, Coin):
     NAME = "Bitcoin"
     DESERIALIZER = lib_tx.DeserializerSegWit
@@ -729,248 +646,6 @@ class BitcoinGoldRegtest(BitcoinGold):
     PEERS = []
 
 
-class BitcoinDiamond(Bitcoin, Coin):
-    NAME = "BitcoinDiamond"
-    SHORTNAME = "BCD"
-    TX_VERSION = 12
-    TX_COUNT = 274277819
-    TX_COUNT_HEIGHT = 498678
-    TX_PER_BLOCK = 50
-    REORG_LIMIT = 1000
-    PEERS = []
-    VALUE_PER_COIN = 10000000
-    DESERIALIZER = lib_tx.DeserializerBitcoinDiamondSegWit
-
-
-class Emercoin(NameMixin, Coin):
-    NAME = "Emercoin"
-    SHORTNAME = "EMC"
-    NET = "mainnet"
-    XPUB_VERBYTES = bytes.fromhex("0488b21e")
-    XPRV_VERBYTES = bytes.fromhex("0488ade4")
-    P2PKH_VERBYTE = bytes.fromhex("21")
-    P2SH_VERBYTES = (bytes.fromhex("5c"),)
-    GENESIS_HASH = ('00000000bcccd459d036a588d1008fce'
-                    '8da3754b205736f32ddfd35350e84c2d')
-    TX_COUNT = 217380620
-    TX_COUNT_HEIGHT = 464000
-    TX_PER_BLOCK = 1700
-    VALUE_PER_COIN = 1000000
-    RPC_PORT = 6662
-
-    DESERIALIZER = lib_tx.DeserializerEmercoin
-
-    PEERS = []
-
-    # Name opcodes
-    OP_NAME_NEW = OpCodes.OP_1
-    OP_NAME_UPDATE = OpCodes.OP_2
-    OP_NAME_DELETE = OpCodes.OP_3
-
-    # Valid name prefixes.
-    NAME_NEW_OPS = (OP_NAME_NEW, OpCodes.OP_DROP, "name", "days",
-                    OpCodes.OP_2DROP, NameMixin.DATA_PUSH_MULTIPLE)
-    NAME_UPDATE_OPS = (OP_NAME_UPDATE, OpCodes.OP_DROP, "name", "days",
-                       OpCodes.OP_2DROP, NameMixin.DATA_PUSH_MULTIPLE)
-    NAME_DELETE_OPS = (OP_NAME_DELETE, OpCodes.OP_DROP, "name",
-                       OpCodes.OP_DROP)
-    NAME_OPERATIONS = (
-        NAME_NEW_OPS,
-        NAME_UPDATE_OPS,
-        NAME_DELETE_OPS,
-    )
-
-    @classmethod
-    def block_header(cls, block, height):
-        '''Returns the block header given a block and its height.'''
-        deserializer = cls.DESERIALIZER(block)
-
-        if deserializer.is_merged_block():
-            return deserializer.read_header(cls.BASIC_HEADER_SIZE)
-        return block[:cls.static_header_len(height)]
-
-    @classmethod
-    def header_hash(cls, header):
-        '''Given a header return hash'''
-        return double_sha256(header[:cls.BASIC_HEADER_SIZE])
-
-    @classmethod
-    def hashX_from_script(cls, script):
-        _, address_script = cls.interpret_name_prefix(script, cls.NAME_OPERATIONS)
-
-        return super().hashX_from_script(address_script)
-
-
-class BitcoinTestnetMixin:
-    SHORTNAME = "XTN"
-    NET = "testnet"
-    XPUB_VERBYTES = bytes.fromhex("043587cf")
-    XPRV_VERBYTES = bytes.fromhex("04358394")
-    P2PKH_VERBYTE = bytes.fromhex("6f")
-    P2SH_VERBYTES = (bytes.fromhex("c4"),)
-    WIF_BYTE = bytes.fromhex("ef")
-    GENESIS_HASH = ('000000000933ea01ad0ee984209779ba'
-                    'aec3ced90fa3f408719526f8d77f4943')
-    REORG_LIMIT = 8000
-    TX_COUNT = 12242438
-    TX_COUNT_HEIGHT = 1035428
-    TX_PER_BLOCK = 21
-    RPC_PORT = 18332
-    PEER_DEFAULT_PORTS = {'t': '51001', 's': '51002'}
-
-
-class BitcoinSVTestnet(BitcoinTestnetMixin, Coin):
-    '''Bitcoin Testnet for Bitcoin SV daemons.'''
-    NAME = "BitcoinSV"
-    PEERS = [
-        'electrontest.cascharia.com t51001 s51002',
-    ]
-    GENESIS_ACTIVATION = 1_344_302
-
-
-class BitcoinSVScalingTestnet(BitcoinSVTestnet):
-    NET = "scalingtest"
-    PEERS = [
-        'stn-server.electrumsv.io t51001 s51002',
-    ]
-    TX_COUNT = 2015
-    TX_COUNT_HEIGHT = 5711
-    TX_PER_BLOCK = 5000
-    GENESIS_ACTIVATION = 14_896
-
-    @classmethod
-    def max_fetch_blocks(cls, height):
-        if height <= 10:
-            return 100
-        return 3
-
-
-class BitcoinCashTestnet(BitcoinTestnetMixin, Coin):
-    '''Bitcoin Testnet for Bitcoin Cash daemons.'''
-    NAME = "BitcoinCash"
-    PEERS = [
-        'bch0.kister.net t s',
-        'testnet.imaginary.cash t50001 s50002',
-        'blackie.c3-soft.com t60001 s60002',
-    ]
-    BLOCK_PROCESSOR = block_proc.LTORBlockProcessor
-
-    @classmethod
-    def warn_old_client_on_tx_broadcast(cls, client_ver):
-        if client_ver < (3, 3, 4):
-            return ('<br/><br/>'
-                    'Your transaction was successfully broadcast.<br/><br/>'
-                    'However, you are using a VULNERABLE version of Electron Cash.<br/>'
-                    'Download the latest version from this web site ONLY:<br/>'
-                    'https://electroncash.org/'
-                    '<br/><br/>')
-        return False
-
-
-class BitcoinSVRegtest(BitcoinSVTestnet):
-    NET = "regtest"
-    GENESIS_HASH = ('0f9188f13cb7b2c71f2a335e3a4fc328'
-                    'bf5beb436012afca590b1a11466e2206')
-    PEERS = []
-    TX_COUNT = 1
-    TX_COUNT_HEIGHT = 1
-    GENESIS_ACTIVATION = 10_000
-
-
-class BitcoinTestnet(BitcoinTestnetMixin, Coin):
-    '''Bitcoin Testnet for Core bitcoind >= 0.13.1.'''
-    NAME = "Bitcoin"
-    DESERIALIZER = lib_tx.DeserializerSegWit
-    CRASH_CLIENT_VER = (3, 2, 3)
-    PEERS = [
-        'testnet.hsmiths.com t53011 s53012',
-        'hsmithsxurybd7uh.onion t53011 s53012',
-        'testnet.qtornado.com s t',
-        'testnet1.bauerj.eu t50001 s50002',
-        'tn.not.fyi t55001 s55002',
-        'bitcoin.cluelessperson.com s t',
-    ]
-
-    @classmethod
-    def warn_old_client_on_tx_broadcast(cls, client_ver):
-        if client_ver < (3, 3, 3):
-            return ('<br/><br/>'
-                    'Your transaction was successfully broadcast.<br/><br/>'
-                    'However, you are using a VULNERABLE version of Electrum.<br/>'
-                    'Download the new version from the usual place:<br/>'
-                    'https://electrum.org/'
-                    '<br/><br/>')
-        return False
-
-
-class BitcoinSegwitTestnet(BitcoinTestnet):
-    NAME = "BitcoinSegwit"  # support legacy name
-
-
-class BitcoinRegtest(BitcoinTestnet):
-    NAME = "Bitcoin"
-    NET = "regtest"
-    GENESIS_HASH = ('0f9188f13cb7b2c71f2a335e3a4fc328'
-                    'bf5beb436012afca590b1a11466e2206')
-    PEERS = []
-    TX_COUNT = 1
-    TX_COUNT_HEIGHT = 1
-
-
-class BitcoinSegwitRegtest(BitcoinRegtest):
-    NAME = "BitcoinSegwit"  # support legacy name
-
-
-class BitcoinSignet(BitcoinTestnet):
-    NAME = "Bitcoin"
-    NET = "signet"
-    GENESIS_HASH = ('00000008819873e925422c1ff0f99f7c'
-                    'c9bbb232af63a077a480a3633bee1ef6')
-    PEERS = []
-    TX_COUNT = 1
-    TX_COUNT_HEIGHT = 1
-
-
-class BitcoinSegwitSignet(BitcoinSignet):
-    NAME = "BitcoinSegwit"  # support legacy name
-
-
-class BitcoinNolnet(BitcoinCash):
-    '''Bitcoin Unlimited nolimit testnet.'''
-    NET = "nolnet"
-    GENESIS_HASH = ('0000000057e31bd2066c939a63b7b862'
-                    '3bd0f10d8c001304bdfc1a7902ae6d35')
-    PEERS = []
-    REORG_LIMIT = 8000
-    TX_COUNT = 583589
-    TX_COUNT_HEIGHT = 8617
-    TX_PER_BLOCK = 50
-    RPC_PORT = 28332
-    PEER_DEFAULT_PORTS = {'t': '52001', 's': '52002'}
-
-
-# Source: https://github.com/sumcoinlabs/sumcoin
-class Sumcoin(Coin):
-    NAME = "Sumcoin"
-    SHORTNAME = "SUM"
-    NET = "mainnet"
-    XPUB_VERBYTES = bytes.fromhex("0488b41c")
-    XPRV_VERBYTES = bytes.fromhex("0488abe6")
-    P2PKH_VERBYTE = bytes.fromhex("3f")
-    P2SH_VERBYTES = (bytes.fromhex("c8"), bytes.fromhex("05"))
-    WIF_BYTE = bytes.fromhex("bf")
-    GENESIS_HASH = ('37d4696c5072cd012f3b7c651e5ce56a'
-                    '1383577e4edacc2d289ec9b25eebfd5e')
-    DESERIALIZER = lib_tx.DeserializerSegWit
-    TX_COUNT = 976394
-    TX_COUNT_HEIGHT = 659520
-    TX_PER_BLOCK = 2
-    REORG_LIMIT = 800
-    RPC_PORT = 3332
-    PEER_DEFAULT_PORTS = {'t': '53332', 's': '53333'}
-    PEERS = []
-
-
 class Tidecoin(Coin):
     NAME = "Tidecoin"
     SHORTNAME = "TDC"
@@ -1015,12 +690,33 @@ class Arielcoin(Coin):
     TX_PER_BLOCK = 3
     PEERS = [
     ]
+    KAWPOW_ACTIVATION_HEIGHT = 0
+    KAWPOW_HEADER_SIZE = 120
 
     @classmethod
     def static_header_offset(cls, height):
         '''Given a header height return its offset in the headers file.'''
-        result = height * cls.BASIC_HEADER_SIZE
+        result = height * cls.KAWPOW_HEADER_SIZE
         return result
+
+    @classmethod
+    def header_hash(cls, header):
+        '''Given a header return the hash.'''
+        import kawpow
+
+        def reverse_bytes(data):
+            b = bytearray(data)
+            b.reverse()
+            return bytes(b)
+
+
+        nNonce64 = util.unpack_le_uint64_from(header, 80)[0]  # uint64_t
+        mix_hash = reverse_bytes(header[88:120])  # uint256
+
+        header_hash = reverse_bytes(double_sha256(header[:80]))
+
+        final_hash = reverse_bytes(kawpow.light_verify(header_hash, mix_hash, nNonce64))
+        return final_hash
 
 
 class Litecoin(Coin):
