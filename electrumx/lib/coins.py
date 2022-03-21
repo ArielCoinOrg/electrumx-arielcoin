@@ -1010,8 +1010,8 @@ class Arielcoin(Coin):
     DEFAULT_MAX_SEND = 1_000_000_000
     RPC_PORT = 8687
     CHUNK_SIZE = 7200
-    TX_COUNT = 440617
-    TX_COUNT_HEIGHT = 11052
+    TX_COUNT = 4406
+    TX_COUNT_HEIGHT = 1105
     TX_PER_BLOCK = 3
     PEERS = [
     ]
