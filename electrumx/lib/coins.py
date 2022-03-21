@@ -50,7 +50,6 @@ import electrumx.server.block_processor as block_proc
 import electrumx.server.daemon as daemon
 from electrumx.server.session import (ElectrumX, DashElectrumX,
                                       SmartCashElectrumX, AuxPoWElectrumX)
-import kawpow
 
 
 @dataclass
@@ -1020,30 +1019,8 @@ class Arielcoin(Coin):
     @classmethod
     def static_header_offset(cls, height):
         '''Given a header height return its offset in the headers file.'''
-        if cls.KAWPOW_ACTIVATION_HEIGHT < 0 or height < cls.KAWPOW_ACTIVATION_HEIGHT:
-            result = height * cls.BASIC_HEADER_SIZE
-        else:  # RVN block header size increased with kawpow fork
-            baseoffset = cls.KAWPOW_ACTIVATION_HEIGHT * cls.BASIC_HEADER_SIZE
-            result = baseoffset + ((height - cls.KAWPOW_ACTIVATION_HEIGHT) * cls.KAWPOW_HEADER_SIZE)
+        result = height * cls.BASIC_HEADER_SIZE
         return result
-
-    @classmethod
-    def header_hash(cls, header):
-        '''Given a header return the hash.'''
-        timestamp = util.unpack_le_uint32_from(header, 68)[0]
-
-        def reverse_bytes(data):
-            b = bytearray(data)
-            b.reverse()
-            return bytes(b)
-
-        nNonce64 = util.unpack_le_uint64_from(header, 80)[0]  # uint64_t
-        mix_hash = reverse_bytes(header[88:120])  # uint256
-
-        header_hash = reverse_bytes(double_sha256(header[:80]))
-
-        final_hash = reverse_bytes(kawpow.light_verify(header_hash, mix_hash, nNonce64))
-        return final_hash
 
 
 class Litecoin(Coin):
