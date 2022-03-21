@@ -50,6 +50,7 @@ import electrumx.server.block_processor as block_proc
 import electrumx.server.daemon as daemon
 from electrumx.server.session import (ElectrumX, DashElectrumX,
                                       SmartCashElectrumX, AuxPoWElectrumX)
+import kawpow
 
 
 @dataclass
@@ -148,20 +149,6 @@ class Coin:
         if height < 130000:
             return 1000
         return 100
-
-    @classmethod
-    def genesis_block(cls, block):
-        '''Check the Genesis block is the right one for this coin.
-
-        Return the block less its unspendable coinbase.
-        '''
-        header = cls.block_header(block, 0)
-        header_hex_hash = hash_to_hex_str(cls.header_hash(header))
-        if header_hex_hash != cls.GENESIS_HASH:
-            raise CoinError(f'genesis block has hash {header_hex_hash} '
-                            f'expected {cls.GENESIS_HASH}')
-
-        return header + b'\0'
 
     @classmethod
     def hashX_from_script(cls, script):
@@ -1029,6 +1016,34 @@ class Arielcoin(Coin):
     TX_PER_BLOCK = 3
     PEERS = [
     ]
+
+    @classmethod
+    def static_header_offset(cls, height):
+        '''Given a header height return its offset in the headers file.'''
+        if cls.KAWPOW_ACTIVATION_HEIGHT < 0 or height < cls.KAWPOW_ACTIVATION_HEIGHT:
+            result = height * cls.BASIC_HEADER_SIZE
+        else:  # RVN block header size increased with kawpow fork
+            baseoffset = cls.KAWPOW_ACTIVATION_HEIGHT * cls.BASIC_HEADER_SIZE
+            result = baseoffset + ((height - cls.KAWPOW_ACTIVATION_HEIGHT) * cls.KAWPOW_HEADER_SIZE)
+        return result
+
+    @classmethod
+    def header_hash(cls, header):
+        '''Given a header return the hash.'''
+        timestamp = util.unpack_le_uint32_from(header, 68)[0]
+
+        def reverse_bytes(data):
+            b = bytearray(data)
+            b.reverse()
+            return bytes(b)
+
+        nNonce64 = util.unpack_le_uint64_from(header, 80)[0]  # uint64_t
+        mix_hash = reverse_bytes(header[88:120])  # uint256
+
+        header_hash = reverse_bytes(double_sha256(header[:80]))
+
+        final_hash = reverse_bytes(kawpow.light_verify(header_hash, mix_hash, nNonce64))
+        return final_hash
 
 
 class Litecoin(Coin):

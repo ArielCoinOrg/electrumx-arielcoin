@@ -130,10 +130,6 @@ class Prefetcher:
                 assert count == len(blocks)
 
                 # Special handling for genesis block
-                if first == 0:
-                    blocks[0] = self.coin.genesis_block(blocks[0])
-                    self.logger.info(f'verified genesis block with hash '
-                                     f'{hex_hashes[0]}')
 
                 # Update our recent average block size estimate
                 size = sum(len(block) for block in blocks)
