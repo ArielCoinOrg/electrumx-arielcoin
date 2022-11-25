@@ -693,7 +693,7 @@ class Arielcoin(Coin):
     KAWPOW_ACTIVATION_HEIGHT = 0
     KAWPOW_HEADER_SIZE = 120
     SMART_ACTIVATION_HEIGHT = 10
-    SMART_HEADER_SIZE = 144
+    SMART_HEADER_SIZE = 184
 
     @classmethod
     def static_header_offset(cls, height):
